@@ -7,16 +7,21 @@ import (
 )
 
 type ConfigInfo struct {
-	Server struct {
-		Host string `yaml:"host"`
-		Port string `yaml:"port"`
-	} `yaml:"server"`
-	DbServer struct {
-		Host     string `yaml:"host"`
-		Port     string `yaml:"port"`
-		Username string `yaml:"username"`
-		Password string `yaml:"password"`
-	} `yaml:"db-server"`
+	Server   Server   `yaml:"server"`
+	DbServer DbServer `yaml:"db-server"`
+}
+
+type Server struct {
+	Host string `yaml:"host"`
+	Port string `yaml:"port"`
+}
+
+type DbServer struct {
+	Host          string `yaml:"host"`
+	Port          string `yaml:"port"`
+	Username      string `yaml:"username"`
+	Password      string `yaml:"password"`
+	DefaultDbName string `yaml:"defaultDbName"`
 }
 
 var Config *ConfigInfo

@@ -1,0 +1,70 @@
+basePath: /api/v1
+definitions:
+  models.Database:
+    properties:
+      name:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: '...'
+  title: FDS Studio DB GATEWAY
+  version: "1.0"
+paths:
+  /database/:
+    delete:
+      description: Delete a new database with the given name
+      parameters:
+      - description: Database name
+        in: body
+        name: database
+        required: true
+        schema:
+          $ref: '#/definitions/models.Database'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a database
+      tags:
+      - Database
+    post:
+      description: Create a new database with the given name
+      parameters:
+      - description: Database name
+        in: body
+        name: database
+        required: true
+        schema:
+          $ref: '#/definitions/models.Database'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a database
+      tags:
+      - Database
+swagger: "2.0"

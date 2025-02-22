@@ -1,5 +1,5 @@
 package models
 
 type Database struct {
-	Name string
+	Name string `json:"name"`
 }

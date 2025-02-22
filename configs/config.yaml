@@ -7,3 +7,4 @@ db-server:
   port: 5432
   username: postgres
   password: postgres
+  defaultDbName: postgres
