@@ -1,17 +1,13 @@
 package main
 
 import (
-	"fmt"
-
-	docs "github.com/FDS-Studio/db-gateway/docs"
-	"github.com/FDS-Studio/db-gateway/internal/configuration"
-	"github.com/FDS-Studio/db-gateway/internal/controllers"
-	"github.com/FDS-Studio/db-gateway/internal/repositories"
+	"github.com/FDS-Studio/db-gateway/docs"
+	"github.com/FDS-Studio/db-gateway/internal/config"
+	"github.com/FDS-Studio/db-gateway/internal/handlers"
 	"github.com/FDS-Studio/db-gateway/internal/routes"
 	"github.com/FDS-Studio/db-gateway/internal/services"
+	dbpoll "github.com/FDS-Studio/db-gateway/internal/services/db-poll"
 	"github.com/gin-gonic/gin"
-
-	dbconnservice "github.com/FDS-Studio/db-gateway/internal/services/db-conn-service"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -23,33 +19,26 @@ import (
 // @host localhost:8080
 // @BasePath /api/v1
 func main() {
-	err := configuration.LoadConfig("configs/config.yaml")
+	databases, err := config.LoadDbConfig()
 	if err != nil {
 		panic(err)
 	}
 
-	dbConn, err := dbconnservice.New()
+	serverConfig, err := config.LoadServerConfig()
 	if err != nil {
 		panic(err)
 	}
-	defer dbConn.CloseAll()
 
-	pgRep := repositories.NewDbRepository()
-	pgService := services.NewDbService(pgRep, dbConn)
-	pgController := controllers.NewDbController(pgService)
-
-	databases, err := pgService.GetAllDb()
-	if err != nil {
-		panic(err)
-	}
+	dbConnPoll := dbpoll.New()
 
 	for _, v := range databases {
-		if err := dbConn.Connect(v.Name); err != nil {
-			fmt.Printf("Ошибка подключения к базе данных %s: %s\n", v.Name, err)
+		err := dbConnPoll.Connect(v)
+		if err != nil {
+			panic(err)
 		}
 	}
 
-	fmt.Println(dbConn)
+	defer dbConnPoll.CloseAll()
 
 	r := gin.Default()
 
@@ -57,12 +46,14 @@ func main() {
 
 	v1 := r.Group("/api/v1")
 	{
-		routes.DbRoutes(v1.Group("/database"), pgController)
+		dbConfgService := services.NewDbConfigService()
+		dbConfigHandler := handlers.NewDbConfigHandler(dbConfgService)
+		routes.DbRoutes(v1.Group("/database"), dbConfigHandler)
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	if err := r.Run(fmt.Sprintf(":%v", configuration.Config.Server.Port)); err != nil {
+	if err := r.Run(serverConfig.Address); err != nil {
 		panic(err)
 	}
 }

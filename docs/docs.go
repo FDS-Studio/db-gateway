@@ -22,7 +22,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Database"
+                    "DbConfig"
                 ],
                 "summary": "Create a database",
                 "parameters": [
@@ -32,48 +32,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Database"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete a new database with the given name",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Database"
-                ],
-                "summary": "Delete a database",
-                "parameters": [
-                    {
-                        "description": "Database name",
-                        "name": "database",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Database"
+                            "$ref": "#/definitions/models.DbConfig"
                         }
                     }
                 ],
@@ -101,10 +60,22 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.Database": {
+        "models.DbConfig": {
             "type": "object",
             "properties": {
+                "host": {
+                    "type": "string"
+                },
                 "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }

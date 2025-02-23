@@ -1,8 +1,16 @@
 basePath: /api/v1
 definitions:
-  models.Database:
+  models.DbConfig:
     properties:
+      host:
+        type: string
       name:
+        type: string
+      password:
+        type: string
+      port:
+        type: string
+      username:
         type: string
     type: object
 host: localhost:8080
@@ -13,33 +21,6 @@ info:
   version: "1.0"
 paths:
   /database/:
-    delete:
-      description: Delete a new database with the given name
-      parameters:
-      - description: Database name
-        in: body
-        name: database
-        required: true
-        schema:
-          $ref: '#/definitions/models.Database'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-        "400":
-          description: Bad Request
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Delete a database
-      tags:
-      - Database
     post:
       description: Create a new database with the given name
       parameters:
@@ -48,7 +29,7 @@ paths:
         name: database
         required: true
         schema:
-          $ref: '#/definitions/models.Database'
+          $ref: '#/definitions/models.DbConfig'
       produces:
       - application/json
       responses:
@@ -66,5 +47,5 @@ paths:
             type: object
       summary: Create a database
       tags:
-      - Database
+      - DbConfig
 swagger: "2.0"
