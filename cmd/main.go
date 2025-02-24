@@ -31,8 +31,8 @@ func main() {
 
 	dbConnPoll := dbpoll.New()
 
-	for _, v := range databases {
-		err := dbConnPoll.Connect(v)
+	for _, dbConfig := range databases {
+		err := dbConnPoll.Connect(dbConfig)
 		if err != nil {
 			panic(err)
 		}
@@ -48,7 +48,7 @@ func main() {
 	{
 		dbConfgService := services.NewDbConfigService()
 		dbConfigHandler := handlers.NewDbConfigHandler(dbConfgService)
-		routes.DbRoutes(v1.Group("/database"), dbConfigHandler)
+		routes.DbRoutes(v1.Group("/db-configs"), dbConfigHandler)
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

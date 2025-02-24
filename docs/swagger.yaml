@@ -20,13 +20,14 @@ info:
   title: FDS Studio DB GATEWAY
   version: "1.0"
 paths:
-  /database/:
+  /db-configs/:
     post:
-      description: Create a new database with the given name
+      description: Create a new db config
       parameters:
-      - description: Database name
+      - description: Database configuration with host, port, username, password and
+          name
         in: body
-        name: database
+        name: dbConfig
         required: true
         schema:
           $ref: '#/definitions/models.DbConfig'
@@ -45,7 +46,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Create a database
+      summary: Create a db config
       tags:
       - DbConfig
 swagger: "2.0"

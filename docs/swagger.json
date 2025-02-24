@@ -9,20 +9,20 @@
     "host": "localhost:8080",
     "basePath": "/api/v1",
     "paths": {
-        "/database/": {
+        "/db-configs/": {
             "post": {
-                "description": "Create a new database with the given name",
+                "description": "Create a new db config",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "DbConfig"
                 ],
-                "summary": "Create a database",
+                "summary": "Create a db config",
                 "parameters": [
                     {
-                        "description": "Database name",
-                        "name": "database",
+                        "description": "Database configuration with host, port, username, password and name",
+                        "name": "dbConfig",
                         "in": "body",
                         "required": true,
                         "schema": {

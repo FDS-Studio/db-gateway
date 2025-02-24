@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/FDS-Studio/db-gateway/internal/config"
 	"github.com/FDS-Studio/db-gateway/internal/models"
@@ -19,10 +20,16 @@ func NewDbConfigService() *DbConfigService {
 func (*DbConfigService) CreateDBConfigHandler(dbConfig models.DbConfig) error {
 	yamlData, err := yaml.Marshal(&dbConfig)
 	if err != nil {
-		fmt.Printf("Error while Marshaling. %v", err)
+		return err
 	}
 
-	file, err := os.Create(config.DbPath + "/" + dbConfig.Name + ".yaml")
+	filePath := path.Join(config.DbConfigPath, dbConfig.Name+".yaml")
+
+	if _, err := os.Stat(filePath); !os.IsNotExist(err) {
+		return fmt.Errorf("file %s already exists", filePath)
+	}
+
+	file, err := os.Create(filePath)
 	if err != nil {
 		return err
 	}

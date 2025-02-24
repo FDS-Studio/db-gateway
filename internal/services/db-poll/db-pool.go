@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/FDS-Studio/db-gateway/internal/config"
 	_ "github.com/lib/pq"
@@ -21,7 +22,7 @@ func New() *DbConnectionPool {
 	return dbcp
 }
 
-func (dbcp *DbConnectionPool) Connect(dbConfig config.Database) error {
+func (dbcp *DbConnectionPool) Connect(dbConfig config.DbConfig) error {
 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s",
 		dbConfig.Host, dbConfig.Port, dbConfig.Username, dbConfig.Password, dbConfig.Name)
 
@@ -66,8 +67,18 @@ func (dbc *DbConnectionPool) Close(name string) error {
 	return nil
 }
 
-func (dbc *DbConnectionPool) CloseAll() {
-	for k := range dbc.dbConnections {
-		dbc.Close(k)
+func (dbcp *DbConnectionPool) CloseAll() {
+	if len(dbcp.dbConnections) == 0 {
+		log.Println("No connections to close")
+		return
+	}
+
+	for k, db := range dbcp.dbConnections {
+		if err := db.Close(); err != nil {
+			log.Printf("Error when closing connection with %s: %v", k, err)
+			continue
+		}
+		delete(dbcp.dbConnections, k)
+		log.Printf("Connection to %s closed successfully", k)
 	}
 }

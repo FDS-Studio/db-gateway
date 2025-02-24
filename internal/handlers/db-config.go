@@ -18,15 +18,15 @@ func NewDbConfigHandler(dbConfigService *services.DbConfigService) *DbConfigHand
 	}
 }
 
-// CreateDatabase godoc
-// @Summary Create a database
-// @Description Create a new database with the given name
-// @Param database body models.DbConfig true "Database name"
+// CreateDbConfig godoc
+// @Summary Create a db config
+// @Description Create a new db config
+// @Param dbConfig body models.DbConfig true "Database configuration with host, port, username, password and name"
 // @Produce application/json
 // @Tags DbConfig
 // @Success         200 {object} map[string]string
 // @Failure         400 {object} map[string]string
-// @Router /database/ [post]
+// @Router /db-configs/ [post]
 func (dbch *DbConfigHandler) CreateDBConfigHandler(c *gin.Context) {
 	var dbConfig models.DbConfig
 	if err := c.ShouldBindJSON(&dbConfig); err != nil || dbConfig.Name == "" {

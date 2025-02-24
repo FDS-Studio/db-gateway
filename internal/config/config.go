@@ -8,7 +8,7 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type Database struct {
+type DbConfig struct {
 	Host     string `yaml:"host"`
 	Port     string `yaml:"port"`
 	Username string `yaml:"username"`
@@ -22,16 +22,16 @@ type Server struct {
 	Address string
 }
 
-const DbPath string = "configs/db"
+const DbConfigPath string = "configs/db"
 const serverPath string = "configs/server.yaml"
 
-func LoadDbConfig() ([]Database, error) {
-	configs, err := os.ReadDir(DbPath)
+func LoadDbConfig() ([]DbConfig, error) {
+	configs, err := os.ReadDir(DbConfigPath)
 	if err != nil {
 		return nil, err
 	}
 
-	databases := make([]Database, len(configs))
+	databases := make([]DbConfig, len(configs))
 
 	for i := range configs {
 		database, err := readDbConfig(configs[i].Name())
@@ -63,21 +63,21 @@ func LoadServerConfig() (Server, error) {
 	return server, nil
 }
 
-func readDbConfig(name string) (Database, error) {
-	filePath := filepath.Join(DbPath, name)
+func readDbConfig(name string) (DbConfig, error) {
+	filePath := filepath.Join(DbConfigPath, name)
 	file, err := os.Open(filePath)
 	if err != nil {
-		return Database{}, err
+		return DbConfig{}, err
 	}
 	defer file.Close()
 
 	d := yaml.NewDecoder(file)
 
-	database := Database{}
+	database := DbConfig{}
 
 	err = d.Decode(&database)
 	if err != nil {
-		return Database{}, err
+		return DbConfig{}, err
 	}
 
 	return database, nil
