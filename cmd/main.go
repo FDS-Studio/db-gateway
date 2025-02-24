@@ -46,7 +46,7 @@ func main() {
 
 	v1 := r.Group("/api/v1")
 	{
-		dbConfgService := services.NewDbConfigService()
+		dbConfgService := services.NewDbConfigService(dbConnPoll)
 		dbConfigHandler := handlers.NewDbConfigHandler(dbConfgService)
 		routes.DbRoutes(v1.Group("/db-configs"), dbConfigHandler)
 	}

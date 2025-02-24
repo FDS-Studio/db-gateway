@@ -7,4 +7,6 @@ import (
 
 func DbRoutes(rg *gin.RouterGroup, dbch *handlers.DbConfigHandler) {
 	rg.POST("/", dbch.CreateDBConfigHandler)
+	rg.GET("/all", dbch.ListDBConfigsHandler)
+	rg.DELETE("/:name", dbch.DeleteDBConfigHandler)
 }

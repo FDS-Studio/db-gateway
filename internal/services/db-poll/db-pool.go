@@ -23,7 +23,7 @@ func New() *DbConnectionPool {
 }
 
 func (dbcp *DbConnectionPool) Connect(dbConfig config.DbConfig) error {
-	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s",
+	connStr := fmt.Sprintf("host=%s port=%v user=%s password=%s dbname=%s",
 		dbConfig.Host, dbConfig.Port, dbConfig.Username, dbConfig.Password, dbConfig.Name)
 
 	_, ok := dbcp.dbConnections[dbConfig.Name]
@@ -45,17 +45,17 @@ func (dbcp *DbConnectionPool) Connect(dbConfig config.DbConfig) error {
 	return nil
 }
 
-func (dbc *DbConnectionPool) Get(name string) (*sql.DB, error) {
-	val, ok := dbc.dbConnections[name]
+func (dbcp *DbConnectionPool) Get(name string) (*sql.DB, error) {
+	val, ok := dbcp.dbConnections[name]
 	if ok {
 		return val, nil
 	}
 
-	return nil, errors.New("value not found for name: " + name)
+	return nil, errors.New("config not found for name: " + name)
 }
 
-func (dbc *DbConnectionPool) Close(name string) error {
-	db, ok := dbc.dbConnections[name]
+func (dbcp *DbConnectionPool) Close(name string) error {
+	db, ok := dbcp.dbConnections[name]
 	if !ok {
 		return errors.New("no connection found for name: " + name)
 	}
@@ -63,14 +63,13 @@ func (dbc *DbConnectionPool) Close(name string) error {
 	if err != nil {
 		return err
 	}
-	delete(dbc.dbConnections, name)
+	delete(dbcp.dbConnections, name)
 	return nil
 }
 
-func (dbcp *DbConnectionPool) CloseAll() {
+func (dbcp *DbConnectionPool) CloseAll() error {
 	if len(dbcp.dbConnections) == 0 {
-		log.Println("No connections to close")
-		return
+		return errors.New("no connections to close")
 	}
 
 	for k, db := range dbcp.dbConnections {
@@ -81,4 +80,11 @@ func (dbcp *DbConnectionPool) CloseAll() {
 		delete(dbcp.dbConnections, k)
 		log.Printf("Connection to %s closed successfully", k)
 	}
+
+	return nil
+}
+
+func (dbcp *DbConnectionPool) CheckStatus(name string) bool {
+	_, ok := dbcp.dbConnections[name]
+	return ok
 }

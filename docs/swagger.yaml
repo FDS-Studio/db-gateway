@@ -4,12 +4,14 @@ definitions:
     properties:
       host:
         type: string
+      isRun:
+        type: boolean
       name:
         type: string
       password:
         type: string
       port:
-        type: string
+        type: integer
       username:
         type: string
     type: object
@@ -47,6 +49,58 @@ paths:
               type: string
             type: object
       summary: Create a db config
+      tags:
+      - DbConfig
+  /db-configs/{name}:
+    delete:
+      description: Delete a database configuration by its name
+      parameters:
+      - description: Name of the database config to delete
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a db config
+  /db-configs/all:
+    get:
+      description: Get a list of all db configs and their statuses
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.DbConfig'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a list of db configs
       tags:
       - DbConfig
 swagger: "2.0"

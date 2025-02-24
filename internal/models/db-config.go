@@ -2,8 +2,9 @@ package models
 
 type DbConfig struct {
 	Host     string `json:"host"`
-	Port     string `json:"port"`
+	Port     int    `json:"port"`
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Name     string `json:"name"`
+	IsRun    bool   `json:"isRun"`
 }

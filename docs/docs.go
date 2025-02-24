@@ -57,6 +57,85 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/db-configs/all": {
+            "get": {
+                "description": "Get a list of all db configs and their statuses",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DbConfig"
+                ],
+                "summary": "Get a list of db configs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.DbConfig"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/db-configs/{name}": {
+            "delete": {
+                "description": "Delete a database configuration by its name",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Delete a db config",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Name of the database config to delete",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -66,6 +145,9 @@ const docTemplate = `{
                 "host": {
                     "type": "string"
                 },
+                "isRun": {
+                    "type": "boolean"
+                },
                 "name": {
                     "type": "string"
                 },
@@ -73,7 +155,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "port": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "username": {
                     "type": "string"
