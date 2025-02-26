@@ -10,6 +10,47 @@
     "basePath": "/api/v1",
     "paths": {
         "/db-configs/": {
+            "put": {
+                "description": "Update a db config",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DbConfig"
+                ],
+                "summary": "Update a db config",
+                "parameters": [
+                    {
+                        "description": "Update database configuration with host, port, username, password and name",
+                        "name": "dbConfig",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.DbConfig"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Create a new db config",
                 "produces": [

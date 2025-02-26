@@ -22,6 +22,29 @@ func NewDbConfigService(dbConnectionPool *dbpoll.DbConnectionPool) *DbConfigServ
 	}
 }
 
+func (dbcs *DbConfigService) ListDBConfigsHandler() ([]models.DbConfig, error) {
+	files, err := os.ReadDir(config.DbConfigPath)
+	if err != nil {
+		return nil, err
+	}
+
+	dbConfigs := make([]models.DbConfig, 0)
+
+	for _, file := range files {
+		dbConfig, err := dbcs.readDbConfig(file.Name())
+		if err != nil {
+			return nil, err
+		}
+
+		ok := dbcs.dbConnectionPool.CheckStatus(dbConfig.Name)
+
+		dbConfig.IsRun = ok
+		dbConfigs = append(dbConfigs, dbConfig)
+	}
+
+	return dbConfigs, nil
+}
+
 func (*DbConfigService) CreateDBConfigHandler(dbConfig models.DbConfig) error {
 	yamlData, err := yaml.Marshal(&dbConfig)
 	if err != nil {
@@ -48,21 +71,26 @@ func (*DbConfigService) CreateDBConfigHandler(dbConfig models.DbConfig) error {
 	return nil
 }
 
-func (dbcs *DbConfigService) UpdateDBConfigHandler() {
-}
-
-func (dbcs *DbConfigService) GetDBConfigHandler() {
-}
-
-func (dbcs *DbConfigService) DeleteDBConfigHandler(name string) error {
-	filePath := path.Join(config.DbConfigPath, name+".yaml")
-
-	ok := dbcs.dbConnectionPool.CheckStatus(name)
+func (dbcs *DbConfigService) UpdateDBConfigHandler(dbConfig models.DbConfig) error {
+	ok := dbcs.dbConnectionPool.CheckStatus(dbConfig.Name)
 	if ok {
 		return errors.New("config in progress")
 	}
 
-	err := os.Remove(filePath)
+	yamlData, err := yaml.Marshal(&dbConfig)
+	if err != nil {
+		return err
+	}
+
+	filePath := path.Join(config.DbConfigPath, dbConfig.Name+".yaml")
+
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	_, err = file.Write(yamlData)
 	if err != nil {
 		return err
 	}
@@ -70,27 +98,20 @@ func (dbcs *DbConfigService) DeleteDBConfigHandler(name string) error {
 	return nil
 }
 
-func (dbcs *DbConfigService) ListDBConfigsHandler() ([]models.DbConfig, error) {
-	files, err := os.ReadDir(config.DbConfigPath)
+func (dbcs *DbConfigService) DeleteDBConfigHandler(name string) error {
+	ok := dbcs.dbConnectionPool.CheckStatus(name)
+	if ok {
+		return errors.New("config in progress")
+	}
+
+	filePath := path.Join(config.DbConfigPath, name+".yaml")
+
+	err := os.Remove(filePath)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	dbConfigs := make([]models.DbConfig, 0)
-
-	for _, file := range files {
-		dbConfig, err := dbcs.readDbConfig(file.Name())
-		if err != nil {
-			return nil, err
-		}
-
-		ok := dbcs.dbConnectionPool.CheckStatus(dbConfig.Name)
-
-		dbConfig.IsRun = ok
-		dbConfigs = append(dbConfigs, dbConfig)
-	}
-
-	return dbConfigs, nil
+	return nil
 }
 
 func (dbcs *DbConfigService) readDbConfig(fileName string) (models.DbConfig, error) {

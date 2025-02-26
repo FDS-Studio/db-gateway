@@ -51,6 +51,34 @@ paths:
       summary: Create a db config
       tags:
       - DbConfig
+    put:
+      description: Update a db config
+      parameters:
+      - description: Update database configuration with host, port, username, password
+          and name
+        in: body
+        name: dbConfig
+        required: true
+        schema:
+          $ref: '#/definitions/models.DbConfig'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a db config
+      tags:
+      - DbConfig
   /db-configs/{name}:
     delete:
       description: Delete a database configuration by its name
