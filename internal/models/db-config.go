@@ -7,4 +7,5 @@ type DbConfig struct {
 	Password string `json:"password"`
 	Name     string `json:"name"`
 	IsRun    bool   `json:"isRun"`
+	AutoRun  bool   `json:"autoRun"`
 }

@@ -1,4 +1,4 @@
-package dbpoll
+package services
 
 import (
 	"database/sql"
@@ -10,19 +10,33 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type DbConnectionPool struct {
+type DbConnectionPoolService struct {
 	dbConnections map[string]*sql.DB
 }
 
-func New() *DbConnectionPool {
-	dbcp := &DbConnectionPool{
+func NewDbConnectionPoolService() *DbConnectionPoolService {
+	dbcp := &DbConnectionPoolService{
 		dbConnections: make(map[string]*sql.DB),
 	}
 
 	return dbcp
 }
 
-func (dbcp *DbConnectionPool) Connect(dbConfig config.DbConfig) error {
+func (dbcps *DbConnectionPoolService) ListDbConnectionPoolNames() ([]string, error) {
+	if len(dbcps.dbConnections) <= 0 {
+		return nil, errors.New("no database connections available")
+	}
+
+	keys := make([]string, 0, len(dbcps.dbConnections))
+
+	for key := range dbcps.dbConnections {
+		keys = append(keys, key)
+	}
+
+	return keys, nil
+}
+
+func (dbcp *DbConnectionPoolService) Connect(dbConfig config.DbConfig) error {
 	connStr := fmt.Sprintf("host=%s port=%v user=%s password=%s dbname=%s",
 		dbConfig.Host, dbConfig.Port, dbConfig.Username, dbConfig.Password, dbConfig.Name)
 
@@ -45,7 +59,7 @@ func (dbcp *DbConnectionPool) Connect(dbConfig config.DbConfig) error {
 	return nil
 }
 
-func (dbcp *DbConnectionPool) Get(name string) (*sql.DB, error) {
+func (dbcp *DbConnectionPoolService) Get(name string) (*sql.DB, error) {
 	val, ok := dbcp.dbConnections[name]
 	if ok {
 		return val, nil
@@ -54,7 +68,7 @@ func (dbcp *DbConnectionPool) Get(name string) (*sql.DB, error) {
 	return nil, errors.New("config not found for name: " + name)
 }
 
-func (dbcp *DbConnectionPool) Close(name string) error {
+func (dbcp *DbConnectionPoolService) Close(name string) error {
 	db, ok := dbcp.dbConnections[name]
 	if !ok {
 		return errors.New("no connection found for name: " + name)
@@ -67,7 +81,7 @@ func (dbcp *DbConnectionPool) Close(name string) error {
 	return nil
 }
 
-func (dbcp *DbConnectionPool) CloseAll() error {
+func (dbcp *DbConnectionPoolService) CloseAll() error {
 	if len(dbcp.dbConnections) == 0 {
 		return errors.New("no connections to close")
 	}
@@ -84,7 +98,7 @@ func (dbcp *DbConnectionPool) CloseAll() error {
 	return nil
 }
 
-func (dbcp *DbConnectionPool) CheckStatus(name string) bool {
+func (dbcp *DbConnectionPoolService) CheckStatus(name string) bool {
 	_, ok := dbcp.dbConnections[name]
 	return ok
 }

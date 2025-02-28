@@ -4,3 +4,4 @@ username: postgres
 password: postgres
 name: postgres
 isrun: true
+autorun: true

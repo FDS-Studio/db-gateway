@@ -6,7 +6,6 @@ import (
 	"github.com/FDS-Studio/db-gateway/internal/handlers"
 	"github.com/FDS-Studio/db-gateway/internal/routes"
 	"github.com/FDS-Studio/db-gateway/internal/services"
-	dbpoll "github.com/FDS-Studio/db-gateway/internal/services/db-poll"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -29,16 +28,21 @@ func main() {
 		panic(err)
 	}
 
-	dbConnPoll := dbpoll.New()
+	dbConnPollService := services.NewDbConnectionPoolService()
+	dbConnPollHandler := handlers.NewDbConnectionPoolHandler(dbConnPollService)
+	dbConfgService := services.NewDbConfigService(dbConnPollService)
+	dbConfigHandler := handlers.NewDbConfigHandler(dbConfgService)
 
 	for _, dbConfig := range databases {
-		err := dbConnPoll.Connect(dbConfig)
-		if err != nil {
-			panic(err)
+		if dbConfig.AutoRun {
+			err := dbConnPollService.Connect(dbConfig)
+			if err != nil {
+				panic(err)
+			}
 		}
 	}
 
-	defer dbConnPoll.CloseAll()
+	defer dbConnPollService.CloseAll()
 
 	r := gin.Default()
 
@@ -46,9 +50,8 @@ func main() {
 
 	v1 := r.Group("/api/v1")
 	{
-		dbConfgService := services.NewDbConfigService(dbConnPoll)
-		dbConfigHandler := handlers.NewDbConfigHandler(dbConfgService)
-		routes.DbRoutes(v1.Group("/db-configs"), dbConfigHandler)
+		routes.DbConfigRoutes(v1.Group("/db-configs"), dbConfigHandler)
+		routes.DbConnectionPoolRoutes(v1.Group("/db-pool"), dbConnPollHandler)
 	}
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
