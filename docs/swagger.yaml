@@ -110,6 +110,8 @@ paths:
               type: string
             type: object
       summary: Delete a db config
+      tags:
+      - DbConfig
   /db-configs/all:
     get:
       description: Get a list of all db configs and their statuses
@@ -131,4 +133,27 @@ paths:
       summary: Get a list of db configs
       tags:
       - DbConfig
+  /db-pool/all:
+    get:
+      description: Get a list of all db connection pool
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              items:
+                type: string
+              type: array
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a list of db connection pool
+      tags:
+      - DbConnPool
 swagger: "2.0"

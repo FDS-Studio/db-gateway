@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func DbRoutes(rg *gin.RouterGroup, dbch *handlers.DbConfigHandler) {
+func DbConfigRoutes(rg *gin.RouterGroup, dbch *handlers.DbConfigHandler) {
 	rg.GET("/all", dbch.ListDBConfigsHandler)
 	rg.POST("/", dbch.CreateDBConfigHandler)
 	rg.PUT("/", dbch.UpdateDBConfigHandler)

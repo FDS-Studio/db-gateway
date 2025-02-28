@@ -137,6 +137,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "DbConfig"
+                ],
                 "summary": "Delete a db config",
                 "parameters": [
                     {
@@ -163,6 +166,41 @@ const docTemplate = `{
                             "type": "object",
                             "additionalProperties": {
                                 "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/db-pool/all": {
+            "get": {
+                "description": "Get a list of all db connection pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DbConnPool"
+                ],
+                "summary": "Get a list of db connection pool",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
                             }
                         }
                     },

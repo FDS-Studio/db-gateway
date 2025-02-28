@@ -8,15 +8,14 @@ import (
 
 	"github.com/FDS-Studio/db-gateway/internal/config"
 	"github.com/FDS-Studio/db-gateway/internal/models"
-	dbpoll "github.com/FDS-Studio/db-gateway/internal/services/db-poll"
 	"gopkg.in/yaml.v2"
 )
 
 type DbConfigService struct {
-	dbConnectionPool *dbpoll.DbConnectionPool
+	dbConnectionPool *DbConnectionPoolService
 }
 
-func NewDbConfigService(dbConnectionPool *dbpoll.DbConnectionPool) *DbConfigService {
+func NewDbConfigService(dbConnectionPool *DbConnectionPoolService) *DbConfigService {
 	return &DbConfigService{
 		dbConnectionPool: dbConnectionPool,
 	}

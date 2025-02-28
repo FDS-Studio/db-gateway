@@ -14,6 +14,7 @@ type DbConfig struct {
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
 	Name     string `yaml:"name"`
+	AutoRun  bool   `yaml:"autorun"`
 }
 
 type Server struct {

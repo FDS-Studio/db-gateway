@@ -91,6 +91,7 @@ func (dbch *DbConfigHandler) UpdateDBConfigHandler(c *gin.Context) {
 // @Description Delete a database configuration by its name
 // @Produce application/json
 // @Param name path string true "Name of the database config to delete"
+// @Tags DbConfig
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
